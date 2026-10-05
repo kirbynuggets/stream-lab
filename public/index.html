@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stream Lab — adaptive streaming, from encode to player</title>
+<link rel="stylesheet" href="/public/style.css" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='7' width='26' height='18' rx='3' fill='none' stroke='%23e50914' stroke-width='3'/%3E%3Cpath d='M14 13l6 3-6 3z' fill='%23e50914'/%3E%3C/svg%3E" />
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="7" width="26" height="18" rx="3"/><path d="M14 13l6 3-6 3z" class="fill"/></svg>
+    <div><b>Stream Lab</b><span>transcode → CDN → adaptive player</span></div>
+  </div>
+  <nav class="libwrap">
+    <select id="library" aria-label="Choose a video"></select>
+    <button id="sample" class="btn">Make a test clip</button>
+    <label class="btn file">Upload a video<input id="upload" type="file" accept="video/*" hidden /></label>
+  </nav>
+</header>
+
+<main>
+  <section class="stage">
+    <div class="videoWrap">
+      <video id="video" playsinline controls></video>
+      <div id="badge" class="badge" hidden><b id="badgeLevel">—</b><span id="badgeKbps"></span></div>
+      <div id="overlay" class="overlay">
+        <h1>Build your own Netflix.</h1>
+        <p>Upload a video, or make a test clip. It gets transcoded into a bitrate ladder, served through a simulated CDN edge, and played by an ABR player written from scratch. Then throttle the network and watch it adapt.</p>
+        <button id="startSample" class="btn primary">Make a 60s test clip →</button>
+      </div>
+      <div id="jobcard" class="jobcard" hidden>
+        <b id="jobTitle">Transcoding…</b>
+        <div id="jobRows" class="jobrows"></div>
+        <small id="jobNote">one ffmpeg per rendition, running in parallel</small>
+      </div>
+    </div>
+
+    <div class="network">
+      <div class="netrow">
+        <span class="lbl">Network</span>
+        <div id="shapes" class="shapes"></div>
+        <label class="lat">+<input id="latency" type="number" min="0" max="1000" step="10" value="0" /> ms RTT</label>
+      </div>
+      <div class="netrow sub">
+        <span id="shapeNote" class="muted">No shaping: segments arrive as fast as the disk allows.</span>
+        <label class="auto"><input id="auto" type="checkbox" checked /> Adaptive (ABR)</label>
+        <span id="levelPicker" class="picker"></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="panels">
+    <div class="card">
+      <h2>Player</h2>
+      <dl id="playerStats">
+        <dt>Rendition</dt><dd id="sLevel">—</dd>
+        <dt>Estimated bandwidth</dt><dd id="sEst">—</dd>
+        <dt>Buffer ahead</dt><dd id="sBuf">—</dd>
+        <dt>Startup time</dt><dd id="sStart">—</dd>
+        <dt>Quality switches</dt><dd id="sSwitch">0</dd>
+        <dt>Stalls</dt><dd id="sStall">0</dd>
+        <dt>Downloaded</dt><dd id="sBytes">0 MB</dd>
+      </dl>
+      <h3>Throughput &amp; chosen rendition</h3>
+      <canvas id="chart" height="130"></canvas>
+      <div id="chartKey" class="key"></div>
+    </div>
+
+    <div class="card">
+      <h2>CDN edge</h2>
+      <dl>
+        <dt>Cache</dt><dd id="eHit">—</dd>
+        <dt>Objects cached</dt><dd id="eObj">0</dd>
+        <dt>Served</dt><dd id="eBytes">0 MB</dd>
+        <dt>Requests</dt><dd id="eReq">0</dd>
+      </dl>
+      <button id="purge" class="btn small">Purge cache</button>
+      <h3>Bitrate ladder</h3>
+      <table id="ladder" class="ladder"><tbody></tbody></table>
+      <h3>Switch log</h3>
+      <ol id="log" class="log"></ol>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span id="encInfo"></span>
+    <a href="https://github.com/kirbynuggets/stream-lab" target="_blank" rel="noopener">Source on GitHub ↗</a>
+  </footer>
+</main>
+
+<div id="toast" class="toast" role="status"></div>
+<script type="module" src="/public/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "stream-lab",
+  "version": "1.0.0",
+  "description": "Build-your-own Netflix: transcode a video into an adaptive bitrate ladder, serve it through a simulated CDN edge, and watch a hand-written HLS player adapt to a throttled network.",
+  "type": "module",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "node --test test/",
+    "test:e2e": "node e2e/browser.e2e.js",
+    "bench": "node bench/transcode.js && node bench/abr.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "puppeteer-core": "^22.15.0"
+  }
+}
